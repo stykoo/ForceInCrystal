@@ -18,7 +18,7 @@
 
 CC=g++
 CFLAGS=-W -Wall -ansi -pedantic -std=c++14 -O3
-LDFLAGS=-lboost_program_options
+LDFLAGS=-lm -lboost_program_options
 EXEC=ForceInCrystal
 SRC=$(wildcard *.cpp)
 OBJ=$(SRC:.cpp=.o)
@@ -32,7 +32,7 @@ main.o: main.cpp
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 %.o: %.cpp %.h
-    $(CC) -o $@ -c $< $(CFLAGS)
+	$(CC) -o $@ -c $< $(CFLAGS)
 
 .PHONY: clean mrproper
 

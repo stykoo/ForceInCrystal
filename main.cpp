@@ -19,7 +19,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/**
+/*!
  * \file main.cpp
  * \author Alexis Poncet <aponcet@lptmc.jussieu.fr>
  * \email 
@@ -32,6 +32,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * to an external force.
 */
 
+#include "simul.h"
+
+/*!
+ * \brief Main function
+ *
+ * Creates and run the simulation.
+ */
 int main(int argc, char **argv) {
+	Simul simulation(argc, argv);
+
+	if (simulation.getStatus() == SIMUL_INIT_HELP) {
+		return 0;
+	} else if (simulation.getStatus() == SIMUL_INIT_FAILED) {
+		return 1;
+	}
+
+	simulation.run();
+
 	return 0;
 }
