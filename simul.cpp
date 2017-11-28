@@ -62,6 +62,8 @@ Simul::Simul(int argc, char **argv) {
 		("N", po::value<long>(&nbIters)->required(),
 		 "Number of time iterations")
 		("dt", po::value<double>(&dt)->required(), "Timestep")
+		("scr", po::value<double>(&screening)->default_value(2.0),
+		 "Screening length")
 		("sleep", po::value<int>(&sleep)->default_value(0),
 		 "Number of milliseconds to sleep for between iterations")
 		("help,h", "Print help message and exit")
@@ -89,7 +91,8 @@ Simul::Simul(int argc, char **argv) {
 	// Check if the values of the parameters are allowed
 	if (notPositive(n1, "n1") || notPositive(n2, "n2")
 		|| notPositive(potStrength, "eps") || notPositive(temperature, "T")
-		|| notPositive(dt, "dt") || notPositive(nbIters, "N")) {
+		|| notPositive(dt, "dt") || notPositive(nbIters, "N")
+		|| notPositive(screening, "scr")) {
 		status = SIMUL_INIT_FAILED;
 		return;
 	}
@@ -104,7 +107,7 @@ void Simul::run() {
 	}
 
 	// Initialize the state of the system
-	State state(n1, n2, potStrength, temperature, dt);
+	State state(n1, n2, potStrength, temperature, dt, screening);
 	std::shared_ptr<const PositionVec> positions = state.getPositions();
 	
 	// Start thread for visualization

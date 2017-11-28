@@ -20,17 +20,18 @@ CC=g++
 CFLAGS=-W -Wall -ansi -pedantic -std=c++14 -O3
 LDFLAGS=-lm -pthread -lboost_program_options \
         -lsfml-graphics -lsfml-window -lsfml-system
+LDFLAGS_TEST=-lm
 EXEC=ForceInCrystal
-SRC=$(wildcard *.cpp)
-OBJ=$(SRC:.cpp=.o)
+# SRC=$(wildcard *.cpp)
+# OBJ=$(SRC:.cpp=.o)
 
 all: $(EXEC)
 
-$(EXEC): $(OBJ)
+$(EXEC): main.o simul.o state.o visu.o 
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-main.o: main.cpp
-	$(CC) -o $@ -c $< $(CFLAGS)
+state_test: state_test.o state.o
+	$(CC) -o $@ $^ $(LDFLAGS_TEST)
 
 %.o: %.cpp %.h
 	$(CC) -o $@ -c $< $(CFLAGS)

@@ -61,7 +61,8 @@ class State {
 	public:
 		//! Constructor of State
 		State(const long _n1, const long _n2, const double _potStrength,
-		      const double _temperature, const double _dt);
+		      const double _temperature, const double _dt,
+			  const double _screening);
 		void evolve(); //!< Do one time step
 
 		std::shared_ptr<const PositionVec> getPositions() const {
@@ -69,10 +70,13 @@ class State {
 		}
 
 	private:
+		void calcInternalForces(); //!< Compute internal forces
+
 		const long n1; //!< Number of cells in the first direction
 		const long n2; //!< Number of cells in the second direction
 		const double potStrength; //!< Strength of the potential
 		const double dt; //!< Timestep
+		const double screening; //!< Screening length
 
 		std::normal_distribution<double> gaussianNoise;  //!< Gaussian noise
 		std::mt19937 rng; //! Random number generator
@@ -80,9 +84,12 @@ class State {
 		//! Positions of the particles
 		// Shared pointer because it will also be used for visualization
 		std::shared_ptr<PositionVec> positions;
+		PositionVec forces; //!< Internal forces
 };
 
 void pbc(double &x, const double L);
+void pbcSym(double &x, const double L);
 void pbcHex(double &x, double &y, const double L1, const double L2);
+void pbcHexSym(double &x, double &y, const double L1, const double L2);
 
 #endif // FORCEINCRYSTAL_STATE_H_

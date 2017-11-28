@@ -62,6 +62,7 @@ class Simul {
 		double temperature; //!< Temperature
 		double dt; //!< Timestep
 		long nbIters; //! Number of time iterations
+		double screening; //! Screening length
 
 		int sleep; //!< Number of milliseconds to sleep for between iterations
 		SimulInitStatus status; //!< Status after initialization
