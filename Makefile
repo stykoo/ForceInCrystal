@@ -18,7 +18,8 @@
 
 CC=g++
 CFLAGS=-W -Wall -ansi -pedantic -std=c++14 -O3
-LDFLAGS=-lm -lboost_program_options
+LDFLAGS=-lm -pthread -lboost_program_options \
+        -lsfml-graphics -lsfml-window -lsfml-system
 EXEC=ForceInCrystal
 SRC=$(wildcard *.cpp)
 OBJ=$(SRC:.cpp=.o)

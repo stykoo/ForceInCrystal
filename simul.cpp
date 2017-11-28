@@ -30,9 +30,11 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <exception>
+#include <thread>
 #include <boost/program_options.hpp>
 #include "simul.h"
 #include "state.h"
+#include "visu.h"
 
 namespace po = boost::program_options;
 
@@ -63,20 +65,22 @@ Simul::Simul(int argc, char **argv) {
 		("help,h", "Print help message and exit")
 		;
 
-	po::variables_map vars;
 	try {
+		po::variables_map vars;
 		po::store(po::parse_command_line(argc, argv, opts), vars);
+
+		// Display help and exit
+		if (vars.count("help")) {
+			std::cout << "Usage: " << argv[0] << " options\n";
+			std::cout << opts << std::endl;
+			status = SIMUL_INIT_HELP;
+			return;
+		}
+
+        po::notify(vars);
 	} catch (std::exception &e) {
 		std::cerr << "Error: " << e.what() << std::endl;
 		status = SIMUL_INIT_FAILED;
-		return;
-	}
-
-	// Display help and exit
-	if (vars.count("help")) {
-		std::cout << "Usage: " << argv[0] << " options\n";
-		std::cout << opts << std::endl;
-		status = SIMUL_INIT_HELP;
 		return;
 	}
 
@@ -99,8 +103,15 @@ void Simul::run() {
 
 	// Initialize the state of the system
 	State state(n1, n2, potStrength, temperature, dt);
+	std::shared_ptr<const PositionVec> positions = state.getPositions();
+	
+	// Start thread for visualization
+	std::thread thVisu(visuThread, positions, n1, n2); 
 
+	// Time evolution
 	for (long t = 0 ; t < nbIters ; ++t) {
 		state.evolve();
 	}
+
+	thVisu.join();
 }

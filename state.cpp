@@ -53,11 +53,13 @@ State::State(const long _n1, const long _n2, const double _potStrength,
 	// We seed the RNG with the current time
 	rng(std::chrono::system_clock::now().time_since_epoch().count())
 {
-	// Put the particles on a array	
-	positions.resize(n1 * n2);
+	// Put the particles on a hexagonal lattice	
+	positions.reset(new PositionVec(n1 * n2));
 	for (long i = 0 ; i < n1 ; ++i) {
 		for (long j = 0 ; j < n2 ; ++j) {
-			// TODO
+			long ind = i * n2 + j;
+			(*positions)[ind][0] = i * Hex::ux + j * Hex::vx;
+			(*positions)[ind][1] = i * Hex::uy + j * Hex::vy;
 		}
 	}
 }

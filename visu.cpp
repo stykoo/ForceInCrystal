@@ -26,3 +26,57 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
  *
  * The system is visualized using the SFML library.
 */
+
+#include <SFML/Graphics.hpp>
+#include "visu.h"
+
+void visuThread(std::shared_ptr<const PositionVec> positions,
+                const long n1, const long n2) {
+	// Initializations
+    sf::RenderWindow window;
+	float scale;
+	int windowWidth, windowHeight;
+	calcScale(scale, windowWidth, windowHeight, n1, n2);
+    window.create(sf::VideoMode(windowWidth, windowHeight),
+	              "Force in crystal");
+
+    sf::CircleShape circle(Visu::circleRad);
+	circle.setFillColor(sf::Color::Blue);
+	float a = scale * n1 * Hex::ux;
+	sf::ConvexShape boundary(4);
+	boundary.setPoint(0, sf::Vector2f(0, 0));
+	boundary.setPoint(1, sf::Vector2f(a, 0));
+	boundary.setPoint(2, sf::Vector2f(windowWidth, windowHeight));
+	boundary.setPoint(3, sf::Vector2f(windowWidth - a, windowHeight));
+	boundary.setFillColor(sf::Color::Yellow);
+
+    window.setFramerateLimit(Visu::FPS);
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+		// Update
+        window.clear(sf::Color::White);
+		window.draw(boundary);
+		for (long i = 0 ; i < n1 * n2 ; ++i) {
+			float x = (*positions)[i][0] * scale; 
+			float y = (*positions)[i][1] * scale; 
+			circle.setPosition(x, y);
+            window.draw(circle);
+		}
+        window.display();
+    }
+}
+
+void calcScale(float &scale, int &windowWidth, int &windowHeight,
+               const long n1, const long n2) {
+	float scale1 = Visu::windowSizeMax / (n1 * Hex::ux +  n2 * Hex::vx);
+	float scale2 = Visu::windowSizeMax / (n1 * Hex::uy +  n2 * Hex::vy);
+	scale = (scale1 < scale2) ? scale1 : scale2; // Minimum
+	windowWidth = scale * (n1 * Hex::ux +  n2 * Hex::vx);
+	windowHeight = scale * (n1 * Hex::uy +  n2 * Hex::vy);
+}

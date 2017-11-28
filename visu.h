@@ -30,4 +30,20 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef FORCEINCRYSTAL_VISU_H_
 #define FORCEINCRYSTAL_VISU_H_
 
+#include "state.h"
+
+namespace Visu {
+	const int windowSizeMax = 900;
+	const float circleRad = 5.0;
+	const int FPS = 24;
+}
+
+//! Thread for visualizing the particles
+void visuThread(std::shared_ptr<const PositionVec> positions,
+                const long n1, const long n2); 
+
+//! Compute scale from number of particles
+void calcScale(float &scale, int &windowWidth, int &windowHeight,
+               const long n1, const long n2);
+
 #endif // FORCEINCRYSTAL_VISU_H_
