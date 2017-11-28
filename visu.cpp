@@ -41,7 +41,6 @@ void visuThread(std::shared_ptr<const PositionVec> positions,
 	              "Force in crystal");
 
     sf::CircleShape circle(Visu::circleRad);
-	circle.setFillColor(sf::Color::Blue);
 	float a = scale * n1 * Hex::ux;
 	sf::ConvexShape boundary(4);
 	boundary.setPoint(0, sf::Vector2f(0, 0));
@@ -62,9 +61,20 @@ void visuThread(std::shared_ptr<const PositionVec> positions,
 		// Update
         window.clear(sf::Color::White);
 		window.draw(boundary);
-		for (long i = 0 ; i < n1 * n2 ; ++i) {
-			float x = (*positions)[i][0] * scale; 
-			float y = (*positions)[i][1] * scale; 
+
+		// Particle 0
+		double x = (*positions)[0][0] * scale + windowWidth / 2; 
+		double y = (*positions)[0][1] * scale + windowHeight / 2; 
+		pbcHex(x, y, n1 * scale, n2 * scale);
+		circle.setFillColor(sf::Color::Red);
+		circle.setPosition(x, y);
+		window.draw(circle);
+		circle.setFillColor(sf::Color::Blue);
+
+		for (long i = 1 ; i < n1 * n2 ; ++i) {
+			double x = (*positions)[i][0] * scale + windowWidth / 2; 
+			double y = (*positions)[i][1] * scale + windowHeight / 2; 
+			pbcHex(x, y, n1 * scale, n2 * scale);
 			circle.setPosition(x, y);
             window.draw(circle);
 		}

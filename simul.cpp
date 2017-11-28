@@ -59,10 +59,11 @@ Simul::Simul(int argc, char **argv) {
 		("eps", po::value<double>(&potStrength)->required(),
 		 "Strength of the potential")
 		("T", po::value<double>(&temperature)->required(), "Temperature")
+		("f", po::value<double>(&force)->required(), "External force")
+		("dt", po::value<double>(&dt)->required(), "Timestep")
 		("N", po::value<long>(&nbIters)->required(),
 		 "Number of time iterations")
-		("dt", po::value<double>(&dt)->required(), "Timestep")
-		("scr", po::value<double>(&screening)->default_value(2.0),
+		("scr", po::value<double>(&screening)->default_value(4.0),
 		 "Screening length")
 		("sleep", po::value<int>(&sleep)->default_value(0),
 		 "Number of milliseconds to sleep for between iterations")
@@ -107,7 +108,7 @@ void Simul::run() {
 	}
 
 	// Initialize the state of the system
-	State state(n1, n2, potStrength, temperature, dt, screening);
+	State state(n1, n2, potStrength, temperature, force, dt, screening);
 	std::shared_ptr<const PositionVec> positions = state.getPositions();
 	
 	// Start thread for visualization

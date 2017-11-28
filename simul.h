@@ -60,6 +60,7 @@ class Simul {
 		long n2; //!< Number of cells in the second direction
 		double potStrength; //!< Strength of the potential
 		double temperature; //!< Temperature
+		double force; //!< External force on particle 0
 		double dt; //!< Timestep
 		long nbIters; //! Number of time iterations
 		double screening; //! Screening length

@@ -47,9 +47,9 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
  * \param _dt Timestep
  */
 State::State(const long _n1, const long _n2, const double _potStrength,
-	         const double _temperature, const double _dt,
+	         const double _temperature, const double _force, const double _dt,
 			 const double _screening) :
-	n1(_n1), n2(_n2), potStrength(_potStrength), dt(_dt),
+	n1(_n1), n2(_n2), potStrength(_potStrength), fx(_force), fy(0), dt(_dt),
 	screening(_screening),
 	// We initialize the gaussian noise from the temperature
 	gaussianNoise(0.0, std::sqrt(2.0 * _temperature * dt)),
@@ -80,6 +80,9 @@ void State::evolve() {
 		// Internal forces + Gaussian noise
 		(*positions)[i][0] += dt * forces[i][0] + gaussianNoise(rng);
 		(*positions)[i][1] += dt * forces[i][1] + gaussianNoise(rng);
+		// External force on particle 0
+		(*positions)[0][0] += dt * fx;
+		(*positions)[0][1] += dt * fy;
 		pbcHex((*positions)[i][0], (*positions)[i][1], n1, n2);
 	}
 }
