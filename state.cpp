@@ -98,12 +98,15 @@ void State::calcInternalForces() {
 			pbcHexSym(dx, dy, n1, n2);
 			double dr2 = dx * dx + dy * dy;
 			double dr = std::sqrt(dr2);
-			double t = - potStrength * (3.0 + dr / screening)
-			           * std::exp(- dr / screening) / (dr2 * dr2 * dr);
-			forces[i][0] += t * dx;
-			forces[j][0] -= t * dx;
-			forces[i][1] += t * dy;
-			forces[j][1] -= t * dy;
+			double u = potStrength * (3.0 + dr / screening)
+				        * std::exp(- dr / screening) / (dr2 * dr2);
+			double fx = u * dx / dr;
+			double fy = u * dy / dr;
+
+			forces[i][0] += fx;
+			forces[j][0] -= fx;
+			forces[i][1] += fy;
+			forces[j][1] -= fy;
         }
     }
 	/*
