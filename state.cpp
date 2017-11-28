@@ -31,6 +31,7 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 #include <chrono>
+#include <iostream>
 #include "state.h"
 
 /*!
@@ -70,5 +71,22 @@ State::State(const long _n1, const long _n2, const double _potStrength,
  * Evolve the system for one time step according to coupled Langevin equation.
  */
 void State::evolve() {
-	// TODO
+	for (long i = 0 ; i < n1 * n2 ; ++i) {
+		(*positions)[i][0] += gaussianNoise(rng);
+		(*positions)[i][1] += gaussianNoise(rng);
+		pbcHex((*positions)[i][0], (*positions)[i][1], n1, n2);
+	}
+}
+
+void pbc(double &x, const double L) {
+	x -= L * std::floor(x / L);
+}
+
+void pbcHex(double &x, double &y, const double L1, const double L2) {
+	double a = x * Hex::inv11 + y * Hex::inv12;	
+	double b = x * Hex::inv21 + y * Hex::inv22;	
+	pbc(a, L1);
+	pbc(b, L2);
+	x = a * Hex::ux + b * Hex::vx;
+	y = a * Hex::uy + b * Hex::vy;
 }

@@ -42,6 +42,10 @@ namespace Hex {
 	const double uy = 0; //!< 2nd component of 1st vector
 	const double vx = 0.5; //!< 1st component of 2nd vector
 	const double vy = 0.86602540378443864676; //!< 2nd component of 2nd vector 
+	const double inv11 = 1.0;
+	const double inv12 = -0.57735026918962576451;
+	const double inv21 = 0;
+	const double inv22 =  1.15470053837925152902;
 }
 
 //! Type name for vector of positions
@@ -77,5 +81,8 @@ class State {
 		// Shared pointer because it will also be used for visualization
 		std::shared_ptr<PositionVec> positions;
 };
+
+void pbc(double &x, const double L);
+void pbcHex(double &x, double &y, const double L1, const double L2);
 
 #endif // FORCEINCRYSTAL_STATE_H_

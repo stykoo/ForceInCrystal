@@ -62,6 +62,8 @@ Simul::Simul(int argc, char **argv) {
 		("N", po::value<long>(&nbIters)->required(),
 		 "Number of time iterations")
 		("dt", po::value<double>(&dt)->required(), "Timestep")
+		("sleep", po::value<int>(&sleep)->default_value(0),
+		 "Number of milliseconds to sleep for between iterations")
 		("help,h", "Print help message and exit")
 		;
 
@@ -111,6 +113,9 @@ void Simul::run() {
 	// Time evolution
 	for (long t = 0 ; t < nbIters ; ++t) {
 		state.evolve();
+		if (sleep > 0) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+		}
 	}
 
 	thVisu.join();

@@ -63,6 +63,7 @@ class Simul {
 		double dt; //!< Timestep
 		long nbIters; //! Number of time iterations
 
+		int sleep; //!< Number of milliseconds to sleep for between iterations
 		SimulInitStatus status; //!< Status after initialization
 };
 
