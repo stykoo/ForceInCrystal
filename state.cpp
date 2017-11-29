@@ -44,7 +44,9 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
  * \param _n2 Number of cells in the second direction
  * \param _potStrength Strength of the potential
  * \param _temperature Temperature
+ * \param _force External force on particle 0
  * \param _dt Timestep
+ * \param _screening Screening length
  */
 State::State(const long _n1, const long _n2, const double _potStrength,
 	         const double _temperature, const double _force, const double _dt,
@@ -87,6 +89,10 @@ void State::evolve() {
 	}
 }
 
+/* \brief Compute the forces between the particles.
+ *
+ * Implement a screened dipole-dipole interaction.
+ */
 void State::calcInternalForces() {
     for (long i = 0 ; i < n1 * n2 ; ++i) {
 		forces[i][0] = 0;
@@ -112,25 +118,42 @@ void State::calcInternalForces() {
 			forces[j][1] -= fy;
         }
     }
-	/*
-	for (long i = 0 ; i < n1 ; ++i) {
-		for (long j = 0 ; j < n2 ; ++j) {
-			long ind = i * n2 + j;
-			std::cout << forces[ind][0]  << " " << forces[ind][1] << "\n";
-		}
-		std::cout << "\n";
-    }
-	*/
 }
 
+/*! 
+ * \brief Periodic boundary conditions on a segment
+ * 
+ * Update x to be between 0 and L.
+ *
+ * \param x Value
+ * \param L Length of the box
+ */
 void pbc(double &x, const double L) {
 	x -= L * std::floor(x / L);
 }
 
+/*! 
+ * \brief Periodic boundary conditions on a segment (symmetric)
+ * 
+ * Update x to be between -L/2 and L/2.
+ *
+ * \param x Value
+ * \param L Length of the box
+ */
 void pbcSym(double &x, const double L) {
 	x -= L * std::round(x / L);
 }
 
+/*! 
+ * \brief Periodic boundary conditions on a hexagonal lattice
+ * 
+ * Update x to be between x and y to be in the cell of lengths L1 and L2.
+ *
+ * \param x Value 1
+ * \param y Value 2
+ * \param L1 Length of the cell in the first direction
+ * \param L2 Length of the cell in the first direction
+ */
 void pbcHex(double &x, double &y, const double L1, const double L2) {
 	double a = x * Hex::inv11 + y * Hex::inv12;	
 	double b = x * Hex::inv21 + y * Hex::inv22;	
@@ -140,6 +163,17 @@ void pbcHex(double &x, double &y, const double L1, const double L2) {
 	y = a * Hex::uy + b * Hex::vy;
 }
 
+/*! 
+ * \brief Periodic boundary conditions on a hexagonal lattice (symmetric)
+ * 
+ * Update x to be between x and y to be in the cell of lengths L1 and L2
+ * with (0, 0) being the center of the cell.
+ *
+ * \param x Value 1
+ * \param y Value 2
+ * \param L1 Length of the cell in the first direction
+ * \param L2 Length of the cell in the first direction
+ */
 void pbcHexSym(double &x, double &y, const double L1, const double L2) {
 	double a = x * Hex::inv11 + y * Hex::inv12;	
 	double b = x * Hex::inv21 + y * Hex::inv22;	

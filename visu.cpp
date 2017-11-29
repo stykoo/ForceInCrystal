@@ -30,6 +30,16 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 #include <SFML/Graphics.hpp>
 #include "visu.h"
 
+/*!
+ * \brief Thread for visualization.
+ *
+ * Open a window, draw the particles and update their
+ * positions at a certain number of FPS while the simulation is runing.
+ *
+ * \param positions Positions of the particles
+ * \param n1 Number of cells in the first direction
+ * \param n2 Number of cells in the second direction
+ */
 void visuThread(std::shared_ptr<const PositionVec> positions,
                 const long n1, const long n2) {
 	// Initializations
@@ -82,6 +92,18 @@ void visuThread(std::shared_ptr<const PositionVec> positions,
     }
 }
 
+/*!
+ * \brief Compute the scale to go from physical unit to screen pixel unit.
+ *
+ * Compute the scale to go from physical unit to screen pixel unit
+ * and the width and height of the window.
+ *
+ * \param scale Scale for physical space to pixels
+ * \param windowWidth Width of the window
+ * \param windowHeight Height of the window
+ * \param n1 Number of cells in the first direction
+ * \param n2 Number of cells in the second direction
+ */
 void calcScale(float &scale, int &windowWidth, int &windowHeight,
                const long n1, const long n2) {
 	float scale1 = Visu::windowSizeMax / (n1 * Hex::ux +  n2 * Hex::vx);

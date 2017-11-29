@@ -88,9 +88,13 @@ class State {
 		PositionVec forces; //!< Internal forces
 };
 
+//!< Periodic boundary conditions on a segment
 void pbc(double &x, const double L);
+//!< Periodic boundary conditions on a segment (symmetric)
 void pbcSym(double &x, const double L);
+//!< Periodic boundary conditions on a hexagonal lattice
 void pbcHex(double &x, double &y, const double L1, const double L2);
+//!< Periodic boundary conditions on a hexagonal lattice (symmetric)
 void pbcHexSym(double &x, double &y, const double L1, const double L2);
 
 #endif // FORCEINCRYSTAL_STATE_H_

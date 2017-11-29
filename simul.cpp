@@ -99,7 +99,12 @@ Simul::Simul(int argc, char **argv) {
 	}
 }
 
-//! Run the simulation
+/*! \brief Run the simulation
+ *
+ * Construct the state of the system and update it for the number
+ * of iterations wanted. Also take care of launching the thread for
+ * visualization.
+ */
 void Simul::run() {
 	if (status != SIMUL_INIT_SUCCESS) {
 		std::cerr << "You should not be runing a failed simulation..."
