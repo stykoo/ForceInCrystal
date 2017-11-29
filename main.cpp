@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*!
- * \mainpage Force in lattice
+ * \mainpage Force in crystal
  *
  * ForceInCrystal is a software to investigate the behavior of a 2d
  * hexagonal lattice of Brownian particles when one of them is submitted
