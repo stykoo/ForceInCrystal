@@ -42,9 +42,11 @@ namespace Hex {
 	const double uy = 0; //!< 2nd component of 1st vector
 	const double vx = 0.5; //!< 1st component of 2nd vector
 	const double vy = 0.86602540378443864676; //!< 2nd component of 2nd vector 
-	const double inv11 = 1.0;
+	const double inv11 = 1.0; //!< Element (1, 1) of the inverse matrix
+	//! Element (1, 2) of the inverse matrix
 	const double inv12 = -0.57735026918962576451;
-	const double inv21 = 0;
+	const double inv21 = 0; //!< Element (2, 1) of the inverted matrix
+	//! Element (2, 2) of the inverse matrix
 	const double inv22 =  1.15470053837925152902;
 }
 
@@ -65,6 +67,7 @@ class State {
 			  const double _screening);
 		void evolve(); //!< Do one time step
 
+		//! Return a pointer on the positions of the particles
 		std::shared_ptr<const PositionVec> getPositions() const {
 			return positions; 
 		}
@@ -88,13 +91,13 @@ class State {
 		PositionVec forces; //!< Internal forces
 };
 
-//!< Periodic boundary conditions on a segment
+//! Periodic boundary conditions on a segment
 void pbc(double &x, const double L);
-//!< Periodic boundary conditions on a segment (symmetric)
+//! Periodic boundary conditions on a segment (symmetric)
 void pbcSym(double &x, const double L);
-//!< Periodic boundary conditions on a hexagonal lattice
+//! Periodic boundary conditions on a hexagonal lattice
 void pbcHex(double &x, double &y, const double L1, const double L2);
-//!< Periodic boundary conditions on a hexagonal lattice (symmetric)
+//! Periodic boundary conditions on a hexagonal lattice (symmetric)
 void pbcHexSym(double &x, double &y, const double L1, const double L2);
 
 #endif // FORCEINCRYSTAL_STATE_H_

@@ -76,7 +76,7 @@ class Simul {
  * is not strictly positive.
  *
  * \param a Variable
- * \param std::string Name of variable
+ * \param name Name of variable
  * \return false if the variable is strictly positive, true otherwise
  */
 template<typename T>

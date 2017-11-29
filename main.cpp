@@ -20,16 +20,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*!
- * \file main.cpp
- * \author Alexis Poncet <aponcet@lptmc.jussieu.fr>
- * \email 
- * \version 1.0
- * \date 2017-11-27
- * \brief Main file of ForceInCrystal
+ * \mainpage Force in lattice
  *
  * ForceInCrystal is a software to investigate the behavior of a 2d
  * hexagonal lattice of Brownian particles when one of them is submitted
  * to an external force.
+ */
+/*!
+ * \file main.cpp
+ * \author Alexis Poncet <aponcet@lptmc.jussieu.fr>
+ * \version 1.0
+ * \date 2017-11-27
+ * \brief Main file of ForceInCrystal
 */
 
 #include "simul.h"

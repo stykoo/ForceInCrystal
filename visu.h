@@ -32,10 +32,11 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "state.h"
 
+//! Constant variables for visualization
 namespace Visu {
-	const int windowSizeMax = 900;
-	const float circleRad = 5.0;
-	const int FPS = 24;
+	const int windowSizeMax = 900; //!< Maximum size of the window
+	const float circleRad = 5.0; //!< Radius of the particles on the screen
+	const int FPS = 24; //!< Number of frames per second
 }
 
 //! Thread for visualizing the particles
