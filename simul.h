@@ -52,6 +52,7 @@ class Simul {
 	public:
 		Simul(int argc, char **argv); //!< Constructor from arguments
 		void run(); //!< Run the simulation
+		void print() const; //!< Print the parameters
 
 		//! Get initialization status
 		SimulInitStatus getStatus() const { return status; }

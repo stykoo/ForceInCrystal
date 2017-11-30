@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	simulation.print();
 	simulation.run();
 
 	return 0;

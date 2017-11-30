@@ -103,10 +103,8 @@ Simul::Simul(int argc, char **argv) {
 
 	// Check type of simulation
 	if (evolTypeStr == "ctForce") {
-		std::cout << "Constant force." << std::endl;	
 		evolType = CONSTANT_FORCE;
 	} else if (evolTypeStr == "ctVelocity") {
-		std::cout << "Constant velocity." << std::endl;	
 		evolType = CONSTANT_VELOCITY;
 	} else {
 		std::cerr << "Error: type should be 'ctForce' or 'ctVelocity'"
@@ -116,7 +114,8 @@ Simul::Simul(int argc, char **argv) {
 	}
 }
 
-/*! \brief Run the simulation
+/*!
+ * \brief Run the simulation
  *
  * Construct the state of the system and update it for the number
  * of iterations wanted. Also take care of launching the thread for
@@ -145,4 +144,20 @@ void Simul::run() {
 	}
 
 	thVisu.join();
+}
+
+/*!
+ * \brief Print the parameters of the simulation
+ */
+void Simul::print() const {
+	std::cout << n1 << "x" << n2 << " cells\n"
+	          << "T=" << temperature << ", screening=" << screening << "\n"
+			  << "dt=" << dt << ", nbIters=" << nbIters << "\n";
+	if (evolType == CONSTANT_FORCE) {
+		std::cout << "Constant force: f=" << fv << ", angle=" << angle << "\n";
+	} else if (evolType == CONSTANT_VELOCITY) {
+		std::cout << "Constant velocity: V=" << fv
+		          << ", angle=" << angle << "\n";
+	}
+	std::cout << std::endl;
 }
