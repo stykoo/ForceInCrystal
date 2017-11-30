@@ -74,7 +74,7 @@ void visuThread(std::shared_ptr<const PositionVec> positions,
 
 		// Particle 0
 		double x = (*positions)[0][0] * scale + windowWidth / 2; 
-		double y = (*positions)[0][1] * scale + windowHeight / 2; 
+		double y = (*positions)[1][0] * scale + windowHeight / 2; 
 		pbcHex(x, y, n1 * scale, n2 * scale);
 		circle.setFillColor(sf::Color::Red);
 		circle.setPosition(x, y);
@@ -82,8 +82,8 @@ void visuThread(std::shared_ptr<const PositionVec> positions,
 		circle.setFillColor(sf::Color::Blue);
 
 		for (long i = 1 ; i < n1 * n2 ; ++i) {
-			double x = (*positions)[i][0] * scale + windowWidth / 2; 
-			double y = (*positions)[i][1] * scale + windowHeight / 2; 
+			double x = (*positions)[0][i] * scale + windowWidth / 2; 
+			double y = (*positions)[1][i] * scale + windowHeight / 2; 
 			pbcHex(x, y, n1 * scale, n2 * scale);
 			circle.setPosition(x, y);
             window.draw(circle);

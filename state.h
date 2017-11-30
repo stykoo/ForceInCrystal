@@ -57,7 +57,8 @@ enum StateEvolType {
 };
 
 //! Type name for vector of positions
-typedef std::vector< std::array<double, 2> > PositionVec;
+//typedef std::vector< std::array<double, 2> > PositionVec;
+typedef  std::array<std::vector<double>, 2> PositionVec;
 
 /*!
  * \brief Class for the state of the system

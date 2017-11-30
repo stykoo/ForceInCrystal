@@ -65,16 +65,19 @@ State::State(const long _n1, const long _n2,
 	rng(std::chrono::system_clock::now().time_since_epoch().count())
 {
 	// Put the particles on a hexagonal lattice	
-	positions.reset(new PositionVec(n1 * n2));
+	positions = std::make_shared<PositionVec>();
+	(*positions)[0].resize(n1 * n2);
+	(*positions)[1].resize(n1 * n2);
 	for (long i = 0 ; i < n1 ; ++i) {
 		for (long j = 0 ; j < n2 ; ++j) {
 			long ind = i * n2 + j;
-			(*positions)[ind][0] = (i + 0.5) * Hex::ux + (j + 0.5) * Hex::vx;
-			(*positions)[ind][1] = (i + 0.5) * Hex::uy + (j + 0.5) * Hex::vy;
+			(*positions)[0][ind] = (i + 0.5) * Hex::ux + (j + 0.5) * Hex::vx;
+			(*positions)[1][ind] = (i + 0.5) * Hex::uy + (j + 0.5) * Hex::vy;
 		}
 	}
 
-	forces.resize(n1 * n2);
+	forces[0].resize(n1 * n2);
+	forces[1].resize(n1 * n2);
 }
 
 /*!
@@ -87,20 +90,20 @@ void State::evolve() {
 	// Particles other than 0
 	for (long i = 1 ; i < n1 * n2 ; ++i) {
 		// Internal forces + Gaussian noise
-		(*positions)[i][0] += dt * forces[i][0] + gaussianNoise(rng);
-		(*positions)[i][1] += dt * forces[i][1] + gaussianNoise(rng);
-		pbcHex((*positions)[i][0], (*positions)[i][1], n1, n2);
+		(*positions)[0][i] += dt * forces[0][i] + gaussianNoise(rng);
+		(*positions)[1][i] += dt * forces[1][i] + gaussianNoise(rng);
+		pbcHex((*positions)[0][i], (*positions)[1][i], n1, n2);
 	}
 
 	// Particle 0
 	if (evolType == CONSTANT_FORCE) {
 		(*positions)[0][0] += dt * (forces[0][0] + fvx) + gaussianNoise(rng);
-		(*positions)[0][1] += dt * (forces[0][1] + fvy) + gaussianNoise(rng);
+		(*positions)[1][0] += dt * (forces[1][0] + fvy) + gaussianNoise(rng);
 	} else {
 		(*positions)[0][0] += dt * fvx;
-		(*positions)[0][1] += dt * fvy;
+		(*positions)[1][0] += dt * fvy;
 	}
-		pbcHex((*positions)[0][0], (*positions)[0][1], n1, n2);
+		pbcHex((*positions)[0][0], (*positions)[1][0], n1, n2);
 }
 
 /* \brief Compute the forces between the particles.
@@ -109,14 +112,14 @@ void State::evolve() {
  */
 void State::calcInternalForces() {
     for (long i = 0 ; i < n1 * n2 ; ++i) {
-		forces[i][0] = 0;
-		forces[i][1] = 0;
+		forces[0][i] = 0;
+		forces[1][i] = 0;
     }
 
     for (long i = 0 ; i < n1 * n2 ; ++i) {
         for (long j = i + 1 ; j < n1 * n2 ; ++j) {
-			double dx = (*positions)[i][0] - (*positions)[j][0];
-			double dy = (*positions)[i][1] - (*positions)[j][1];
+			double dx = (*positions)[0][i] - (*positions)[0][j];
+			double dy = (*positions)[1][i] - (*positions)[1][j];
 			// We want the value of dx to be between -n1/2 and n1/2
 			pbcHexSym(dx, dy, n1, n2);
 			double dr2 = dx * dx + dy * dy;
@@ -126,10 +129,10 @@ void State::calcInternalForces() {
 			double fx = u * dx / dr;
 			double fy = u * dy / dr;
 
-			forces[i][0] += fx;
-			forces[j][0] -= fx;
-			forces[i][1] += fy;
-			forces[j][1] -= fy;
+			forces[0][i] += fx;
+			forces[0][j] -= fx;
+			forces[1][i] += fy;
+			forces[1][j] -= fy;
         }
     }
 }
