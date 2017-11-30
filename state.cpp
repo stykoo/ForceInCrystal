@@ -43,14 +43,16 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
  * \param _n1 Number of cells in the first direction
  * \param _n2 Number of cells in the second direction
  * \param _temperature Temperature
- * \param _force External force on particle 0
+ * \param _fv External force or velocity on particle 0
  * \param _dt Timestep
  * \param _screening Screening length
+ * \param _evolType Constant force or velocity
  */
 State::State(const long _n1, const long _n2,
-	         const double _temperature, const double _force, const double _dt,
-			 const double _screening) :
-	n1(_n1), n2(_n2), fx(_force), fy(0), dt(_dt), screening(_screening),
+	         const double _temperature, const double _fv, const double _dt,
+			 const double _screening, const StateEvolType _evolType) :
+	n1(_n1), n2(_n2), fvx(_fv), fvy(0), dt(_dt), screening(_screening),
+	evolType(_evolType),
 	// We initialize the gaussian noise from the temperature
 	gaussianNoise(0.0, std::sqrt(2.0 * _temperature * dt)),
 	// We seed the RNG with the current time
@@ -85,9 +87,14 @@ void State::evolve() {
 	}
 
 	// Particle 0
-	(*positions)[0][0] += dt * (forces[0][0] + fx) + gaussianNoise(rng);
-	(*positions)[0][1] += dt * (forces[0][1] + fy) + gaussianNoise(rng);
-	pbcHex((*positions)[0][0], (*positions)[0][1], n1, n2);
+	if (evolType == CONSTANT_FORCE) {
+		(*positions)[0][0] += dt * (forces[0][0] + fvx) + gaussianNoise(rng);
+		(*positions)[0][1] += dt * (forces[0][1] + fvy) + gaussianNoise(rng);
+	} else {
+		(*positions)[0][0] += dt * fvx;
+		(*positions)[0][1] += dt * fvy;
+	}
+		pbcHex((*positions)[0][0], (*positions)[0][1], n1, n2);
 }
 
 /* \brief Compute the forces between the particles.

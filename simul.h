@@ -33,6 +33,7 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <iostream>
+#include "state.h"
 
 //! State of the simulation after initialization
 enum SimulInitStatus {
@@ -59,10 +60,12 @@ class Simul {
 		long n1; //!< Number of cells in the first direction
 		long n2; //!< Number of cells in the second direction
 		double temperature; //!< Temperature
-		double force; //!< External force on particle 0
+		double fv; //!< External force or velocity on particle 0
 		double dt; //!< Timestep
 		long nbIters; //! Number of time iterations
 		double screening; //! Screening length
+		std::string evolTypeStr; //! Constant force or velocity (string)
+		StateEvolType evolType; //! Constant force or velocity
 
 		int sleep; //!< Number of milliseconds to sleep for between iterations
 		SimulInitStatus status; //!< Status after initialization

@@ -33,7 +33,6 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 #include <thread>
 #include <boost/program_options.hpp>
 #include "simul.h"
-#include "state.h"
 #include "visu.h"
 
 namespace po = boost::program_options;
@@ -57,12 +56,16 @@ Simul::Simul(int argc, char **argv) {
 		("n2", po::value<long>(&n2)->required(),
 		 "Number of cells in the first direction")
 		("T", po::value<double>(&temperature)->required(), "Temperature")
-		("f", po::value<double>(&force)->required(), "External force")
+		("fv", po::value<double>(&fv)->required(),
+		 "External force or velocity")
 		("dt", po::value<double>(&dt)->required(), "Timestep")
 		("N", po::value<long>(&nbIters)->required(),
 		 "Number of time iterations")
 		("scr", po::value<double>(&screening)->default_value(4.0),
 		 "Screening length")
+		("type",
+		 po::value<std::string>(&evolTypeStr)->default_value("ctVelocity"),
+		 "Type of simulation: 'ctForce' or 'ctVelocity'")
 		("sleep", po::value<int>(&sleep)->default_value(0),
 		 "Number of milliseconds to sleep for between iterations")
 		("help,h", "Print help message and exit")
@@ -89,9 +92,22 @@ Simul::Simul(int argc, char **argv) {
 
 	// Check if the values of the parameters are allowed
 	if (notPositive(n1, "n1") || notPositive(n2, "n2")
-		|| notPositive(temperature, "T") || notPositive(dt, "dt")
-		|| notPositive(nbIters, "N") || notPositive(screening, "scr")) {
+		|| notPositive(temperature, "T") || notPositive(fv, "fv")
+		|| notPositive(dt, "dt") || notPositive(nbIters, "N")
+		|| notPositive(screening, "scr")) {
 		status = SIMUL_INIT_FAILED;
+		return;
+	}
+
+	// Check type of simulation
+	if (evolTypeStr == "ctForce") {
+		evolType = CONSTANT_FORCE;
+	} else if (evolTypeStr == "ctVelocity") {
+		evolType = CONSTANT_VELOCITY;
+	} else {
+		std::cerr << "Error: type should be 'ctForce' or 'ctVelocity'"
+		          << std::endl;
+	    status = SIMUL_INIT_FAILED;
 		return;
 	}
 }
@@ -110,7 +126,7 @@ void Simul::run() {
 	}
 
 	// Initialize the state of the system
-	State state(n1, n2, temperature, force, dt, screening);
+	State state(n1, n2, temperature, fv, dt, screening, evolType);
 	std::shared_ptr<const PositionVec> positions = state.getPositions();
 	
 	// Start thread for visualization

@@ -50,6 +50,12 @@ namespace Hex {
 	const double inv22 =  1.15470053837925152902;
 }
 
+//! Whether a the simulation is done at constant force or velocity
+enum StateEvolType {
+	CONSTANT_FORCE, //!< Constant force
+	CONSTANT_VELOCITY, //!< Constant force
+};
+
 //! Type name for vector of positions
 typedef std::vector< std::array<double, 2> > PositionVec;
 
@@ -63,8 +69,9 @@ class State {
 	public:
 		//! Constructor of State
 		State(const long _n1, const long _n2, const double _temperature,
-		      const double _force, const double _dt, const double _screening);
-		void evolve(); //!< Do one time step
+		      const double _fv, const double _dt, const double _screening,
+			  const StateEvolType _evolType);
+		void evolve(); //!< Do one time step with constant force
 
 		//! Return a pointer on the positions of the particles
 		std::shared_ptr<const PositionVec> getPositions() const {
@@ -76,9 +83,10 @@ class State {
 
 		const long n1; //!< Number of cells in the first direction
 		const long n2; //!< Number of cells in the second direction
-		double fx, fy; //!< External force on particle 0
+		double fvx, fvy; //!< External force or velocity on particle 0
 		const double dt; //!< Timestep
 		const double screening; //!< Screening length
+		const StateEvolType evolType; //! Constant force or velocity
 
 		std::normal_distribution<double> gaussianNoise;  //!< Gaussian noise
 		std::mt19937 rng; //! Random number generator
