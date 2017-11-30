@@ -17,8 +17,7 @@
 # along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 
 CC=g++
-#CFLAGS=-W -Wall -ansi -pedantic -std=c++14 -O3
-CFLAGS=-W -Wall -ansi -pedantic -std=c++14 -g
+CFLAGS=-W -Wall -ansi -pedantic -std=c++14 -O2
 LDFLAGS=-lm -pthread -lboost_program_options \
         -lsfml-graphics -lsfml-window -lsfml-system
 LDFLAGS_TEST=-lm
