@@ -76,15 +76,18 @@ State::State(const long _n1, const long _n2,
  */
 void State::evolve() {
 	calcInternalForces();
-	for (long i = 0 ; i < n1 * n2 ; ++i) {
+	// Particles other than 0
+	for (long i = 1 ; i < n1 * n2 ; ++i) {
 		// Internal forces + Gaussian noise
 		(*positions)[i][0] += dt * forces[i][0] + gaussianNoise(rng);
 		(*positions)[i][1] += dt * forces[i][1] + gaussianNoise(rng);
-		// External force on particle 0
-		(*positions)[0][0] += dt * fx;
-		(*positions)[0][1] += dt * fy;
 		pbcHex((*positions)[i][0], (*positions)[i][1], n1, n2);
 	}
+
+	// Particle 0
+	(*positions)[0][0] += dt * (forces[0][0] + fx) + gaussianNoise(rng);
+	(*positions)[0][1] += dt * (forces[0][1] + fy) + gaussianNoise(rng);
+	pbcHex((*positions)[0][0], (*positions)[0][1], n1, n2);
 }
 
 /* \brief Compute the forces between the particles.
