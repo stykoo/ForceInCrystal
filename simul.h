@@ -58,7 +58,6 @@ class Simul {
 	private:
 		long n1; //!< Number of cells in the first direction
 		long n2; //!< Number of cells in the second direction
-		double potStrength; //!< Strength of the potential
 		double temperature; //!< Temperature
 		double force; //!< External force on particle 0
 		double dt; //!< Timestep

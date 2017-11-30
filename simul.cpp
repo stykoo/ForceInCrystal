@@ -56,8 +56,6 @@ Simul::Simul(int argc, char **argv) {
 		 "Number of cells in the first direction")
 		("n2", po::value<long>(&n2)->required(),
 		 "Number of cells in the first direction")
-		("eps", po::value<double>(&potStrength)->required(),
-		 "Strength of the potential")
 		("T", po::value<double>(&temperature)->required(), "Temperature")
 		("f", po::value<double>(&force)->required(), "External force")
 		("dt", po::value<double>(&dt)->required(), "Timestep")
@@ -91,9 +89,8 @@ Simul::Simul(int argc, char **argv) {
 
 	// Check if the values of the parameters are allowed
 	if (notPositive(n1, "n1") || notPositive(n2, "n2")
-		|| notPositive(potStrength, "eps") || notPositive(temperature, "T")
-		|| notPositive(dt, "dt") || notPositive(nbIters, "N")
-		|| notPositive(screening, "scr")) {
+		|| notPositive(temperature, "T") || notPositive(dt, "dt")
+		|| notPositive(nbIters, "N") || notPositive(screening, "scr")) {
 		status = SIMUL_INIT_FAILED;
 		return;
 	}
@@ -113,7 +110,7 @@ void Simul::run() {
 	}
 
 	// Initialize the state of the system
-	State state(n1, n2, potStrength, temperature, force, dt, screening);
+	State state(n1, n2, temperature, force, dt, screening);
 	std::shared_ptr<const PositionVec> positions = state.getPositions();
 	
 	// Start thread for visualization

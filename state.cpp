@@ -42,17 +42,15 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
  *
  * \param _n1 Number of cells in the first direction
  * \param _n2 Number of cells in the second direction
- * \param _potStrength Strength of the potential
  * \param _temperature Temperature
  * \param _force External force on particle 0
  * \param _dt Timestep
  * \param _screening Screening length
  */
-State::State(const long _n1, const long _n2, const double _potStrength,
+State::State(const long _n1, const long _n2,
 	         const double _temperature, const double _force, const double _dt,
 			 const double _screening) :
-	n1(_n1), n2(_n2), potStrength(_potStrength), fx(_force), fy(0), dt(_dt),
-	screening(_screening),
+	n1(_n1), n2(_n2), fx(_force), fy(0), dt(_dt), screening(_screening),
 	// We initialize the gaussian noise from the temperature
 	gaussianNoise(0.0, std::sqrt(2.0 * _temperature * dt)),
 	// We seed the RNG with the current time
@@ -107,7 +105,7 @@ void State::calcInternalForces() {
 			pbcHexSym(dx, dy, n1, n2);
 			double dr2 = dx * dx + dy * dy;
 			double dr = std::sqrt(dr2);
-			double u = potStrength * (3.0 + dr / screening)
+			double u = (3.0 + dr / screening)
 				        * std::exp(- dr / screening) / (dr2 * dr2);
 			double fx = u * dx / dr;
 			double fy = u * dy / dr;

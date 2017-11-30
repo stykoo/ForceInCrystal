@@ -62,9 +62,8 @@ typedef std::vector< std::array<double, 2> > PositionVec;
 class State {
 	public:
 		//! Constructor of State
-		State(const long _n1, const long _n2, const double _potStrength,
-		      const double _temperature, const double _force, const double _dt,
-			  const double _screening);
+		State(const long _n1, const long _n2, const double _temperature,
+		      const double _force, const double _dt, const double _screening);
 		void evolve(); //!< Do one time step
 
 		//! Return a pointer on the positions of the particles
@@ -77,7 +76,6 @@ class State {
 
 		const long n1; //!< Number of cells in the first direction
 		const long n2; //!< Number of cells in the second direction
-		const double potStrength; //!< Strength of the potential
 		double fx, fy; //!< External force on particle 0
 		const double dt; //!< Timestep
 		const double screening; //!< Screening length
