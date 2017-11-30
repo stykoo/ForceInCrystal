@@ -69,8 +69,8 @@ class State {
 	public:
 		//! Constructor of State
 		State(const long _n1, const long _n2, const double _temperature,
-		      const double _fv, const double _dt, const double _screening,
-			  const StateEvolType _evolType);
+		      const double _fv, const double _angle, const double _dt,
+			  const double _screening, const StateEvolType _evolType);
 		void evolve(); //!< Do one time step with constant force
 
 		//! Return a pointer on the positions of the particles

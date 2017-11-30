@@ -58,6 +58,8 @@ Simul::Simul(int argc, char **argv) {
 		("T", po::value<double>(&temperature)->required(), "Temperature")
 		("fv", po::value<double>(&fv)->required(),
 		 "External force or velocity")
+		("angle", po::value<double>(&angle)->default_value(0.0),
+		 "Angle in degrees for external force or velocity")
 		("dt", po::value<double>(&dt)->required(), "Timestep")
 		("N", po::value<long>(&nbIters)->required(),
 		 "Number of time iterations")
@@ -101,8 +103,10 @@ Simul::Simul(int argc, char **argv) {
 
 	// Check type of simulation
 	if (evolTypeStr == "ctForce") {
+		std::cout << "Constant force." << std::endl;	
 		evolType = CONSTANT_FORCE;
 	} else if (evolTypeStr == "ctVelocity") {
+		std::cout << "Constant velocity." << std::endl;	
 		evolType = CONSTANT_VELOCITY;
 	} else {
 		std::cerr << "Error: type should be 'ctForce' or 'ctVelocity'"
@@ -126,7 +130,7 @@ void Simul::run() {
 	}
 
 	// Initialize the state of the system
-	State state(n1, n2, temperature, fv, dt, screening, evolType);
+	State state(n1, n2, temperature, fv, angle, dt, screening, evolType);
 	std::shared_ptr<const PositionVec> positions = state.getPositions();
 	
 	// Start thread for visualization

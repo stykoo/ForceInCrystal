@@ -61,6 +61,8 @@ class Simul {
 		long n2; //!< Number of cells in the second direction
 		double temperature; //!< Temperature
 		double fv; //!< External force or velocity on particle 0
+		//!  Angle in degrees for eternal force or velocity on particle 0
+		double angle;
 		double dt; //!< Timestep
 		long nbIters; //! Number of time iterations
 		double screening; //! Screening length
