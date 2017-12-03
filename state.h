@@ -56,6 +56,12 @@ enum StateEvolType {
 	CONSTANT_VELOCITY, //!< Constant force
 };
 
+//! Periodic boundary conditions used for the simulation
+enum StatePBCType {
+	SQUARE_PBC, //!< Square periodic boundary conditions
+	HEX_PBC //!< Hexagonal periodic boundary conditions
+};
+
 //! Type name for vector of positions
 //typedef std::vector< std::array<double, 2> > PositionVec;
 typedef  std::array<std::vector<double>, 2> PositionVec;
@@ -71,7 +77,8 @@ class State {
 		//! Constructor of State
 		State(const long _n1, const long _n2, const double _temperature,
 		      const double _fv, const double _angle, const double _dt,
-			  const double _screening, const StateEvolType _evolType);
+			  const double _screening, const StateEvolType _evolType,
+			  const StatePBCType _pbcType);
 		void evolve(); //!< Do one time step with constant force
 
 		//! Return a pointer on the positions of the particles
@@ -81,13 +88,17 @@ class State {
 
 	private:
 		void calcInternalForces(); //!< Compute internal forces
+		void enforcePBC(); //!< Enforce periodic boundary conditions
 
 		const long n1; //!< Number of cells in the first direction
 		const long n2; //!< Number of cells in the second direction
+		const double Lx; //!< Length in x
+		const double Ly; //!< Length in y
 		double fvx, fvy; //!< External force or velocity on particle 0
 		const double dt; //!< Timestep
 		const double screening; //!< Screening length
 		const StateEvolType evolType; //! Constant force or velocity
+		const StatePBCType pbcType; //! Square or hexagonal PBC
 
 		std::normal_distribution<double> gaussianNoise;  //!< Gaussian noise
 		std::mt19937 rng; //! Random number generator

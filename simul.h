@@ -69,6 +69,8 @@ class Simul {
 		double screening; //! Screening length
 		std::string evolTypeStr; //! Constant force or velocity (string)
 		StateEvolType evolType; //! Constant force or velocity
+		std::string pbcTypeStr; //! Square or hexagonal PBC (string)
+		StatePBCType pbcType; //! Square or hexagonal PBC
 
 		int sleep; //!< Number of milliseconds to sleep for between iterations
 		SimulInitStatus status; //!< Status after initialization
