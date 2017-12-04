@@ -96,10 +96,10 @@ Simul::Simul(int argc, char **argv) {
 	}
 
 	// Check if the values of the parameters are allowed
-	if (notPositive(n1, "n1") || notPositive(n2, "n2")
+	if (notStrPositive(n1, "n1") || notStrPositive(n2, "n2")
 		|| notPositive(temperature, "T") || notPositive(fv, "fv")
-		|| notPositive(dt, "dt") // || notPositive(nbIters, "N")
-		|| notPositive(screening, "scr")) {
+		|| notStrPositive(dt, "dt") || notPositive(nbIters, "N")
+		|| notStrPositive(screening, "scr")) {
 		status = SIMUL_INIT_FAILED;
 		return;
 	}

@@ -77,17 +77,37 @@ class Simul {
 };
 
 /*!
- * \brief Check if variable is positive.
+ * \brief Check if variable is positive or null.
  *
  * Returns true and prints an error message if the variable
- * is not strictly positive.
+ * is not positive.
+ *
+ * \param a Variable
+ * \param name Name of variable
+ * \return false if the variable is positive, true otherwise
+ */
+template<typename T>
+bool notPositive(const T &a, std::string name) {
+	if (a < T(0)) {
+		std::cerr << "Error: " << name << " should be positive."
+		          << std::endl;
+		return true;
+	}
+	return false;
+}
+
+/*!
+ * \brief Check if variable is strictly positive.
+ *
+ * Returns true and prints an error message if the variable
+ * is not positive or is null.
  *
  * \param a Variable
  * \param name Name of variable
  * \return false if the variable is strictly positive, true otherwise
  */
 template<typename T>
-bool notPositive(const T &a, std::string name) {
+bool notStrPositive(const T &a, std::string name) {
 	if (a <= T(0)) {
 		std::cerr << "Error: " << name << " should be strictly positive."
 		          << std::endl;
