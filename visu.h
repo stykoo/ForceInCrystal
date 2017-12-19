@@ -40,11 +40,9 @@ namespace Visu {
 }
 
 //! Thread for visualizing the particles
-void visuThread(std::shared_ptr<const PositionVec> positions,
-                const long n1, const long n2); 
+void visuThread(const State *state, const long n1, const long n2); 
 
 //! Compute scale from number of particles
-void calcScale(float &scale, int &windowWidth, int &windowHeight,
-               const double Lx, const double Ly);
+float calcScale(const double Lx, const double Ly);
 
 #endif // FORCEINCRYSTAL_VISU_H_

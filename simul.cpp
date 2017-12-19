@@ -130,10 +130,9 @@ void Simul::run() {
 
 	// Initialize the state of the system
 	State state(n1, n2, temperature, fv, angle, dt, screening, evolType);
-	std::shared_ptr<const PositionVec> positions = state.getPositions();
 	
 	// Start thread for visualization
-	std::thread thVisu(visuThread, positions, n1, n2); 
+	std::thread thVisu(visuThread, &state, n1, n2); 
 
 	// Time evolution
 	for (long t = 0 ; t < nbIters ; ++t) {

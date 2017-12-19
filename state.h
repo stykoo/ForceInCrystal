@@ -51,8 +51,8 @@ enum StateEvolType {
 };
 
 //! Type name for vector of positions
-//typedef std::vector< std::array<double, 2> > PositionVec;
-typedef  std::array<std::vector<double>, 2> PositionVec;
+typedef std::vector< std::array<double, 2> > PositionVec;
+//typedef  std::array<std::vector<double>, 2> PositionVec;
 
 /*!
  * \brief Class for the state of the system
@@ -68,10 +68,10 @@ class State {
 			  const double _screening, const StateEvolType _evolType);
 		void evolve(); //!< Do one time step with constant force
 
-		//! Return a pointer on the positions of the particles
-		std::shared_ptr<const PositionVec> getPositions() const {
-			return positions; 
+		std::array<double, 2> getPos(size_t i) const {
+			return positions[i];
 		}
+
 
 	private:
 		void calcInternalForces(); //!< Compute internal forces
@@ -89,9 +89,7 @@ class State {
 		std::normal_distribution<double> gaussianNoise;  //!< Gaussian noise
 		std::mt19937 rng; //! Random number generator
 
-		//! Positions of the particles
-		// Shared pointer because it will also be used for visualization
-		std::shared_ptr<PositionVec> positions;
+		PositionVec positions; //!< Positions of the particles
 		PositionVec forces; //!< Internal forces
 };
 

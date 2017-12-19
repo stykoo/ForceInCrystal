@@ -63,21 +63,18 @@ State::State(const long _n1, const long _n2,
 	// We seed the RNG with the current time
 	rng(std::chrono::system_clock::now().time_since_epoch().count())
 {
-	positions = std::make_shared<PositionVec>();
-	(*positions)[0].resize(n1 * n2);
-	(*positions)[1].resize(n1 * n2);
+	positions.resize(n1 * n2);
 
 	for (long i = 0 ; i < n1 ; ++i) {
 		for (long j = 0 ; j < n2 ; ++j) {
 			long ind = i * n2 + j;
-			(*positions)[0][ind] = i + 0.5 * (j % 2) + 0.25;
-			(*positions)[1][ind] = (j + 0.5) * Hex::vy;
+			positions[ind][0] = i + 0.5 * (j % 2) + 0.25;
+			positions[ind][1] = (j + 0.5) * Hex::vy;
 		}
 	}
 	enforcePBC();
 
-	forces[0].resize(n1 * n2);
-	forces[1].resize(n1 * n2);
+	forces.resize(n1 * n2);
 }
 
 /*!
@@ -90,17 +87,17 @@ void State::evolve() {
 	// Particles other than 0
 	for (long i = 1 ; i < n1 * n2 ; ++i) {
 		// Internal forces + Gaussian noise
-		(*positions)[0][i] += dt * forces[0][i] + gaussianNoise(rng);
-		(*positions)[1][i] += dt * forces[1][i] + gaussianNoise(rng);
+		positions[i][0] += dt * forces[i][0] + gaussianNoise(rng);
+		positions[i][1] += dt * forces[i][1] + gaussianNoise(rng);
 	}
 
 	// Particle 0
 	if (evolType == CONSTANT_FORCE) {
-		(*positions)[0][0] += dt * (forces[0][0] + fvx) + gaussianNoise(rng);
-		(*positions)[1][0] += dt * (forces[1][0] + fvy) + gaussianNoise(rng);
+		positions[0][0] += dt * (forces[0][0] + fvx) + gaussianNoise(rng);
+		positions[0][1] += dt * (forces[0][1] + fvy) + gaussianNoise(rng);
 	} else {
-		(*positions)[0][0] += dt * fvx;
-		(*positions)[1][0] += dt * fvy;
+		positions[0][0] += dt * fvx;
+		positions[0][1] += dt * fvy;
 	}
 
 	enforcePBC();
@@ -112,14 +109,14 @@ void State::evolve() {
  */
 void State::calcInternalForces() {
     for (long i = 0 ; i < n1 * n2 ; ++i) {
-		forces[0][i] = 0;
-		forces[1][i] = 0;
+		forces[i][0] = 0;
+		forces[i][1] = 0;
     }
 
     for (long i = 0 ; i < n1 * n2 ; ++i) {
         for (long j = i + 1 ; j < n1 * n2 ; ++j) {
-			double dx = (*positions)[0][i] - (*positions)[0][j];
-			double dy = (*positions)[1][i] - (*positions)[1][j];
+			double dx = positions[i][0] - positions[j][0];
+			double dy = positions[i][1] - positions[j][1];
 			// We want the periodized interval to be centered in 0
 			pbcSym(dx, Lx);
 			pbcSym(dy, Ly);
@@ -130,10 +127,10 @@ void State::calcInternalForces() {
 			double fx = u * dx / dr;
 			double fy = u * dy / dr;
 
-			forces[0][i] += fx;
-			forces[0][j] -= fx;
-			forces[1][i] += fy;
-			forces[1][j] -= fy;
+			forces[i][0] += fx;
+			forces[j][0] -= fx;
+			forces[i][1] += fy;
+			forces[j][1] -= fy;
         }
     }
 }
@@ -144,8 +141,8 @@ void State::calcInternalForces() {
  */
 void State::enforcePBC() {
 	for (long i = 0 ; i < n1 * n2 ; ++i) {
-		pbc((*positions)[0][i], Lx);
-		pbc((*positions)[1][i], Ly);
+		pbc(positions[i][0], Lx);
+		pbc(positions[i][1], Ly);
 	}
 }
 
