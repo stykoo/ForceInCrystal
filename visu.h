@@ -43,16 +43,8 @@ namespace Visu {
 void visuThread(std::shared_ptr<const PositionVec> positions,
                 const long n1, const long n2); 
 
-//! Thread for visualizing the particles if using hexagonal PBC
-void visuThreadHex(std::shared_ptr<const PositionVec> positions,
-                   const long n1, const long n2); 
-
 //! Compute scale from number of particles
 void calcScale(float &scale, int &windowWidth, int &windowHeight,
                const double Lx, const double Ly);
-
-//! Compute scale from number of particles (hexagonal PBC)
-void calcScaleHex(float &scale, int &windowWidth, int &windowHeight,
-                  const long n1, const long n2);
 
 #endif // FORCEINCRYSTAL_VISU_H_

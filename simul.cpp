@@ -68,9 +68,6 @@ Simul::Simul(int argc, char **argv) {
 		("type",
 		 po::value<std::string>(&evolTypeStr)->default_value("ctVelocity"),
 		 "Type of simulation: 'ctForce' or 'ctVelocity'")
-		("pbc",
-		 po::value<std::string>(&pbcTypeStr)->default_value("square"),
-		 "Type of periodic boundary conditions: 'square' or 'hex'")
 		("sleep", po::value<int>(&sleep)->default_value(0),
 		 "Number of milliseconds to sleep for between iterations")
 		("help,h", "Print help message and exit")
@@ -115,23 +112,6 @@ Simul::Simul(int argc, char **argv) {
 	    status = SIMUL_INIT_FAILED;
 		return;
 	}
-
-	// Check type of PBC
-	if (pbcTypeStr == "square") {
-		pbcType = SQUARE_PBC;
-		if (n2 % 2 == 1) {
-			std::cerr << "Error: n2 should be even when using square PBC"
-			          << std::endl;
-			status = SIMUL_INIT_FAILED;
-			return;
-		}
-	} else if (pbcTypeStr == "hex") {
-		pbcType = HEX_PBC;
-	} else {
-		std::cerr << "Error: pbc should be 'square' or 'hex'" << std::endl;
-	    status = SIMUL_INIT_FAILED;
-		return;
-	}
 }
 
 /*!
@@ -149,17 +129,11 @@ void Simul::run() {
 	}
 
 	// Initialize the state of the system
-	State state(n1, n2, temperature, fv, angle, dt, screening, evolType,
-	            pbcType);
+	State state(n1, n2, temperature, fv, angle, dt, screening, evolType);
 	std::shared_ptr<const PositionVec> positions = state.getPositions();
 	
 	// Start thread for visualization
-	std::thread *thVisu;
-	if (pbcType == HEX_PBC) {
-		thVisu = new std::thread(visuThreadHex, positions, n1, n2); 
-	} else {
-		thVisu = new std::thread(visuThread, positions, n1, n2); 
-	}
+	std::thread thVisu(visuThread, positions, n1, n2); 
 
 	// Time evolution
 	for (long t = 0 ; t < nbIters ; ++t) {
@@ -169,8 +143,7 @@ void Simul::run() {
 		}
 	}
 
-	thVisu->join();
-	delete thVisu;
+	thVisu.join();
 }
 
 /*!

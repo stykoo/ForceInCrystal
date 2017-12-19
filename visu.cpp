@@ -90,70 +90,6 @@ void visuThread(std::shared_ptr<const PositionVec> positions,
 }
 
 /*!
- * \brief Thread for visualization (hexagonal PBC).
- *
- * Open a window, draw the particles and update their
- * positions at a certain number of FPS while the simulation is runing.
- * Used with the hexagonal periodic boundary conditions
- *
- * \param positions Positions of the particles
- * \param n1 Number of cells in the first direction
- * \param n2 Number of cells in the second direction
- */
-void visuThreadHex(std::shared_ptr<const PositionVec> positions,
-                   const long n1, const long n2) {
-	// Initializations
-    sf::RenderWindow window;
-	float scale;
-	int windowWidth, windowHeight;
-	calcScaleHex(scale, windowWidth, windowHeight, n1, n2);
-    window.create(sf::VideoMode(windowWidth, windowHeight),
-	              "Force in crystal");
-
-    sf::CircleShape circle(Visu::circleRad);
-
-	float a = scale * n1 * Hex::ux;
-	sf::ConvexShape boundary(4);
-	boundary.setPoint(0, sf::Vector2f(0, 0));
-	boundary.setPoint(1, sf::Vector2f(a, 0));
-	boundary.setPoint(2, sf::Vector2f(windowWidth, windowHeight));
-	boundary.setPoint(3, sf::Vector2f(windowWidth - a, windowHeight));
-	boundary.setFillColor(sf::Color::Yellow);
-
-    window.setFramerateLimit(Visu::FPS);
-
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
-		// Update
-        window.clear(sf::Color::White);
-		window.draw(boundary);
-
-		// Particle 0
-		double x = (*positions)[0][0] * scale + windowWidth / 2; 
-		double y = (*positions)[1][0] * scale + windowHeight / 2; 
-		pbcHex(x, y, n1 * scale, n2 * scale);
-		circle.setFillColor(sf::Color::Red);
-		circle.setPosition(x, y);
-		window.draw(circle);
-		circle.setFillColor(sf::Color::Blue);
-
-		for (long i = 1 ; i < n1 * n2 ; ++i) {
-			double x = (*positions)[0][i] * scale + windowWidth / 2; 
-			double y = (*positions)[1][i] * scale + windowHeight / 2; 
-			pbcHex(x, y, n1 * scale, n2 * scale);
-			circle.setPosition(x, y);
-            window.draw(circle);
-		}
-        window.display();
-    }
-}
-
-/*!
  * \brief Compute the scale to go from physical unit to screen pixel unit.
  *
  * Compute the scale to go from physical unit to screen pixel unit
@@ -174,25 +110,3 @@ void calcScale(float &scale, int &windowWidth, int &windowHeight,
 	windowHeight = scale * Ly;
 }
 
-/*!
- * \brief Compute the scale to go from physical unit to screen pixel unit.
- * (hexagonal PBC)
- *
- * Compute the scale to go from physical unit to screen pixel unit
- * and the width and height of the window.
- * Used with the hexagonal periodic boundary conditions
- *
- * \param scale Scale for physical space to pixels
- * \param windowWidth Width of the window
- * \param windowHeight Height of the window
- * \param n1 Number of cells in the first direction
- * \param n2 Number of cells in the second direction
- */
-void calcScaleHex(float &scale, int &windowWidth, int &windowHeight,
-                  const long n1, const long n2) {
-	float scale1 = Visu::windowSizeMax / (n1 * Hex::ux +  n2 * Hex::vx);
-	float scale2 = Visu::windowSizeMax / (n1 * Hex::uy +  n2 * Hex::vy);
-	scale = (scale1 < scale2) ? scale1 : scale2; // Minimum
-	windowWidth = scale * (n1 * Hex::ux +  n2 * Hex::vx);
-	windowHeight = scale * (n1 * Hex::uy +  n2 * Hex::vy);
-}

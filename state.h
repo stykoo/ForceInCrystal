@@ -42,24 +42,12 @@ namespace Hex {
 	const double uy = 0; //!< 2nd component of 1st vector
 	const double vx = 0.5; //!< 1st component of 2nd vector
 	const double vy = 0.86602540378443864676; //!< 2nd component of 2nd vector 
-	const double inv11 = 1.0; //!< Element (1, 1) of the inverse matrix
-	//! Element (1, 2) of the inverse matrix
-	const double inv12 = -0.57735026918962576451;
-	const double inv21 = 0; //!< Element (2, 1) of the inverted matrix
-	//! Element (2, 2) of the inverse matrix
-	const double inv22 =  1.15470053837925152902;
 }
 
 //! Whether a the simulation is done at constant force or velocity
 enum StateEvolType {
 	CONSTANT_FORCE, //!< Constant force
 	CONSTANT_VELOCITY, //!< Constant force
-};
-
-//! Periodic boundary conditions used for the simulation
-enum StatePBCType {
-	SQUARE_PBC, //!< Square periodic boundary conditions
-	HEX_PBC //!< Hexagonal periodic boundary conditions
 };
 
 //! Type name for vector of positions
@@ -77,8 +65,7 @@ class State {
 		//! Constructor of State
 		State(const long _n1, const long _n2, const double _temperature,
 		      const double _fv, const double _angle, const double _dt,
-			  const double _screening, const StateEvolType _evolType,
-			  const StatePBCType _pbcType);
+			  const double _screening, const StateEvolType _evolType);
 		void evolve(); //!< Do one time step with constant force
 
 		//! Return a pointer on the positions of the particles
@@ -98,7 +85,6 @@ class State {
 		const double dt; //!< Timestep
 		const double screening; //!< Screening length
 		const StateEvolType evolType; //! Constant force or velocity
-		const StatePBCType pbcType; //! Square or hexagonal PBC
 
 		std::normal_distribution<double> gaussianNoise;  //!< Gaussian noise
 		std::mt19937 rng; //! Random number generator
@@ -113,9 +99,5 @@ class State {
 void pbc(double &x, const double L);
 //! Periodic boundary conditions on a segment (symmetric)
 void pbcSym(double &x, const double L);
-//! Periodic boundary conditions on a hexagonal lattice
-void pbcHex(double &x, double &y, const double L1, const double L2);
-//! Periodic boundary conditions on a hexagonal lattice (symmetric)
-void pbcHexSym(double &x, double &y, const double L1, const double L2);
 
 #endif // FORCEINCRYSTAL_STATE_H_

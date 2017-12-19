@@ -51,13 +51,13 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 State::State(const long _n1, const long _n2,
 	         const double _temperature, const double _fv, const double _angle,
 			 const double _dt, const double _screening,
-			 const StateEvolType _evolType, const StatePBCType _pbcType) :
+			 const StateEvolType _evolType) :
 	n1(_n1), n2(_n2),
 	// Caution: the length in y in not n2!
 	Lx(_n1), Ly(_n2 * Hex::vy),
 	fvx(_fv * std::cos(_angle * M_PI / 180)),
 	fvy(_fv * std::sin(_angle * M_PI / 180)),
-	dt(_dt), screening(_screening), evolType(_evolType), pbcType(_pbcType),
+	dt(_dt), screening(_screening), evolType(_evolType),
 	// We initialize the gaussian noise from the temperature
 	gaussianNoise(0.0, std::sqrt(2.0 * _temperature * dt)),
 	// We seed the RNG with the current time
@@ -67,24 +67,11 @@ State::State(const long _n1, const long _n2,
 	(*positions)[0].resize(n1 * n2);
 	(*positions)[1].resize(n1 * n2);
 
-	// Put the particles on a hexagonal lattice	
-	if (pbcType == SQUARE_PBC) {
-		for (long i = 0 ; i < n1 ; ++i) {
-			for (long j = 0 ; j < n2 ; ++j) {
-				long ind = i * n2 + j;
-				(*positions)[0][ind] = i + 0.5 * (j % 2) + 0.25;
-				(*positions)[1][ind] = (j + 0.5) * Hex::vy;
-			}
-		}
-	} else if (pbcType == HEX_PBC) {
-		for (long i = 0 ; i < n1 ; ++i) {
-			for (long j = 0 ; j < n2 ; ++j) {
-				long ind = i * n2 + j;
-				(*positions)[0][ind] = (i + 0.5) * Hex::ux
-				                       + (j + 0.5) * Hex::vx;
-				(*positions)[1][ind] = (i + 0.5) * Hex::uy
-				                       + (j + 0.5) * Hex::vy;
-			}
+	for (long i = 0 ; i < n1 ; ++i) {
+		for (long j = 0 ; j < n2 ; ++j) {
+			long ind = i * n2 + j;
+			(*positions)[0][ind] = i + 0.5 * (j % 2) + 0.25;
+			(*positions)[1][ind] = (j + 0.5) * Hex::vy;
 		}
 	}
 	enforcePBC();
@@ -134,12 +121,8 @@ void State::calcInternalForces() {
 			double dx = (*positions)[0][i] - (*positions)[0][j];
 			double dy = (*positions)[1][i] - (*positions)[1][j];
 			// We want the periodized interval to be centered in 0
-			if (pbcType == SQUARE_PBC) {
-				pbcSym(dx, Lx);
-				pbcSym(dy, Ly);
-			} else if (pbcType == HEX_PBC) {
-				pbcHexSym(dx, dy, n1, n2);
-			}
+			pbcSym(dx, Lx);
+			pbcSym(dy, Ly);
 			double dr2 = dx * dx + dy * dy;
 			double dr = std::sqrt(dr2);
 			double u = (3.0 + dr / screening)
@@ -157,18 +140,12 @@ void State::calcInternalForces() {
 
 /* \brief Enforce periodic boundary conditions
  *
- * Put the positions in an square or hexagonal box.
+ * Put the positions in a square box.
  */
 void State::enforcePBC() {
-	if (pbcType == SQUARE_PBC) {
-		for (long i = 0 ; i < n1 * n2 ; ++i) {
-			pbc((*positions)[0][i], Lx);
-			pbc((*positions)[1][i], Ly);
-		}
-	} else if (pbcType == HEX_PBC) {
-		for (long i = 0 ; i < n1 * n2 ; ++i) {
-			pbcHex((*positions)[0][i], (*positions)[1][i], n1, n2);
-		}
+	for (long i = 0 ; i < n1 * n2 ; ++i) {
+		pbc((*positions)[0][i], Lx);
+		pbc((*positions)[1][i], Ly);
 	}
 }
 
@@ -195,43 +172,4 @@ void pbc(double &x, const double L) {
  */
 void pbcSym(double &x, const double L) {
 	x -= L * std::round(x / L);
-}
-
-/*! 
- * \brief Periodic boundary conditions on a hexagonal lattice
- * 
- * Update x to be between x and y to be in the cell of lengths L1 and L2.
- *
- * \param x Value 1
- * \param y Value 2
- * \param L1 Length of the cell in the first direction
- * \param L2 Length of the cell in the first direction
- */
-void pbcHex(double &x, double &y, const double L1, const double L2) {
-	double a = x * Hex::inv11 + y * Hex::inv12;	
-	double b = x * Hex::inv21 + y * Hex::inv22;	
-	pbc(a, L1);
-	pbc(b, L2);
-	x = a * Hex::ux + b * Hex::vx;
-	y = a * Hex::uy + b * Hex::vy;
-}
-
-/*! 
- * \brief Periodic boundary conditions on a hexagonal lattice (symmetric)
- * 
- * Update x to be between x and y to be in the cell of lengths L1 and L2
- * with (0, 0) being the center of the cell.
- *
- * \param x Value 1
- * \param y Value 2
- * \param L1 Length of the cell in the first direction
- * \param L2 Length of the cell in the first direction
- */
-void pbcHexSym(double &x, double &y, const double L1, const double L2) {
-	double a = x * Hex::inv11 + y * Hex::inv12;	
-	double b = x * Hex::inv21 + y * Hex::inv22;	
-	pbcSym(a, L1);
-	pbcSym(b, L2);
-	x = a * Hex::ux + b * Hex::vx;
-	y = a * Hex::uy + b * Hex::vy;
 }
