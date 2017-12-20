@@ -112,5 +112,7 @@ class State {
 void pbc(double &x, const double L);
 //! Periodic boundary conditions on a segment (symmetric)
 void pbcSym(double &x, const double L);
+//! Periodic boundary conditions on a segment, returning also offset
+void pbcOffset(double &x, int &o, const double L);
 
 #endif // FORCEINCRYSTAL_STATE_H_

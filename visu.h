@@ -24,7 +24,7 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
  * \date 2017-11-27
  * \brief Visualization of the system
  *
- * Header file for simul.cpp.
+ * Header file for visu.cpp.
 */
 
 #ifndef FORCEINCRYSTAL_VISU_H_
@@ -33,22 +33,30 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 #include <SFML/Graphics.hpp>
 #include "state.h"
 
-//! Constant variables for visualization
-namespace Visu {
-	const int windowSizeMax = 800; //!< Maximum size of the window
-	const float circleRad = 5.0; //!< Radius of the particles on the screen
-	const int FPS = 24; //!< Number of frames per second
-}
+class Visu {
+	public:
+		Visu(const State *state, const long n1, const long n2);
+		void run();
 
-//! Thread for visualizing the particles
-void visuThread(const State *state, const long n1, const long n2); 
+	private:
+		//! Lines from Voronoi tesselation
+		void genLinesVoronoi(sf::VertexArray &lines);
 
-//! Lines from Voronoi tesselation
-void linesFromVoronoi(sf::VertexArray &lines, const VoronoiList &voronoi,
-                      const double x0, const double y0, const double Lx,
-					  const double Ly, const float scale);
+		// Constant variables for visualization
+		const int windowSizeMax = 800; //!< Maximum size of the window
+		const float circleRad = 5.0; //!< Radius of the particles on the screen
+		const int FPS = 24; //!< Number of frames per second
 
-//! Compute scale from number of particles
-float calcScale(const double Lx, const double Ly);
+		const State *state; //!< Pointer to the state of the system
+		const long n1; //!< Number of cells in the first direction
+		const long n2; //!< Number of cells in the second direction
+		const double Lx; //!< Length in x
+		const double Ly; //!< Length in y
+		const float scale; //!< Scale from data to window
+		const int windowWidth; //< Width of the window
+		const int windowHeight; //< Height of the window
+		const int shiftX; //< Shift in the x direction
+		const int shiftY; //< Shift in the y direction
+};
 
 #endif // FORCEINCRYSTAL_VISU_H_

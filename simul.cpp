@@ -132,7 +132,8 @@ void Simul::run() {
 	State state(n1, n2, temperature, fv, angle, dt, screening, evolType);
 	
 	// Start thread for visualization
-	std::thread thVisu(visuThread, &state, n1, n2); 
+	Visu visu(&state, n1, n2);
+	std::thread thVisu(&Visu::run, &visu); 
 
 	// Time evolution
 	for (long t = 0 ; t < nbIters ; ++t) {

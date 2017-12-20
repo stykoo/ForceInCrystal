@@ -216,3 +216,17 @@ void pbc(double &x, const double L) {
 void pbcSym(double &x, const double L) {
 	x -= L * std::round(x / L);
 }
+
+/*! 
+ * \brief Periodic boundary conditions on a segment, with offset
+ * 
+ * Update x to be between 0 and L, and o to be the corresponding offset
+ *
+ * \param x Value
+ * \param o Offset
+ * \param L Length of the box
+ */
+void pbcOffset(double &x, int &o, const double L) {
+	o = (int) std::floor(x / L);
+	x -= L * o;
+}
