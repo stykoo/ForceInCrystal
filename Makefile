@@ -19,6 +19,7 @@
 CC=g++
 CFLAGS=-W -Wall -ansi -pedantic -std=c++14 -O2
 LDFLAGS=-lm -pthread -lboost_program_options \
+		-lgmp -lCGAL \
         -lsfml-graphics -lsfml-window -lsfml-system
 LDFLAGS_TEST=-lm
 EXEC=ForceInCrystal

@@ -78,6 +78,52 @@ State::State(const long _n1, const long _n2,
 }
 
 /*!
+ * \brief Return the Delaunay triangulation of the state
+ *
+ * The box is not considered as periodic: we center the triangulation
+ * on particle 0.
+ */
+CGAL_DT State::computeDelaunay() const {
+	std::list<CGAL_DT::Point> L;
+	for (long i = 0 ; i < n1 * n2 ; ++i) {
+		double x = positions[i][0] - positions[0][0];
+		double y = positions[i][1] - positions[0][1];
+		pbcSym(x, Lx);
+		pbcSym(y, Ly);
+		L.push_front(CGAL_DT::Point(x, y));
+	}
+
+	return CGAL_DT(L.begin(), L.end()); // Delaunay triangulation
+}
+
+/*!
+ * \brief Return the Voronoi tesselation of the state
+ *
+ * The box is not considered as periodic: we center the tesselation
+ * on particle 0.
+ */
+VoronoiList State::computeVoronoi() const {
+	CGAL_DT T = computeDelaunay();
+	// CGAL_K::Iso_rectangle_2 bbox(-Lx / 2, -Ly / 2, Lx / 2, Ly / 2);
+	VoronoiList voronoi;
+
+    for (CGAL_DT::Edge_iterator eit = T.edges_begin() ; eit != T.edges_end() ;
+	     ++eit) {
+		CGAL::Object obj = T.dual(eit);
+		/*CGAL_K::Object inter = CGAL::intersection(bbox, obj);
+		const CGAL_K::Segment_2* s =
+			CGAL::object_cast<CGAL_K::Segment_2>(&inter); */
+		const CGAL_K::Segment_2* s =
+			CGAL::object_cast<CGAL_K::Segment_2>(&obj);
+		if (s) {
+			voronoi.push_back(*s);
+		}
+	}
+
+	return voronoi; // This copy should be avoided
+}
+
+/*!
  * \brief Do one time step
  *
  * Evolve the system for one time step according to coupled Langevin equation.

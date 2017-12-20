@@ -33,8 +33,17 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 #include <array>
+#include <list>
 #include <random>
 #include <memory>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+
+// We use CGAL for Delaunay triangulation
+typedef CGAL::Exact_predicates_inexact_constructions_kernel CGAL_K;
+typedef CGAL::Delaunay_triangulation_2<CGAL_K>  CGAL_DT;
+typedef std::list<CGAL_K::Segment_2> VoronoiList;
 
 //! Basis vectors of hexagonal lattice
 namespace Hex {
@@ -68,6 +77,12 @@ class State {
 			  const double _screening, const StateEvolType _evolType);
 		void evolve(); //!< Do one time step with constant force
 
+		//! Return the Delaunay triangulation (centered on the first particle)
+		CGAL_DT computeDelaunay() const;
+		//! Return the Voronoi tesselation (centered on the first particle)
+		VoronoiList computeVoronoi() const;
+
+		//! Get the position of particle i
 		std::array<double, 2> getPos(size_t i) const {
 			return positions[i];
 		}

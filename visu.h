@@ -30,6 +30,7 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef FORCEINCRYSTAL_VISU_H_
 #define FORCEINCRYSTAL_VISU_H_
 
+#include <SFML/Graphics.hpp>
 #include "state.h"
 
 //! Constant variables for visualization
@@ -41,6 +42,11 @@ namespace Visu {
 
 //! Thread for visualizing the particles
 void visuThread(const State *state, const long n1, const long n2); 
+
+//! Lines from Voronoi tesselation
+void linesFromVoronoi(sf::VertexArray &lines, const VoronoiList &voronoi,
+                      const double x0, const double y0, const double Lx,
+					  const double Ly, const float scale);
 
 //! Compute scale from number of particles
 float calcScale(const double Lx, const double Ly);

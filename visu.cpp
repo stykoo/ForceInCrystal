@@ -27,7 +27,6 @@ along with ForceInCrystal.  If not, see <http://www.gnu.org/licenses/>.
  * The system is visualized using the SFML library.
 */
 
-#include <SFML/Graphics.hpp>
 #include "visu.h"
 
 /*!
@@ -63,8 +62,17 @@ void visuThread(const State *state, const long n1, const long n2) {
                 window.close();
         }
 
+		// Voronoi tesselation
+		VoronoiList vor = state->computeVoronoi();
+		sf::VertexArray lines(sf::Lines);
+		linesFromVoronoi(lines, vor, state->getPos(0)[0], state->getPos(0)[1],
+		                 Lx, Ly, scale);
+
 		// Update
         window.clear(sf::Color::Yellow);
+
+		// Lines of Delaunay triangulation
+		window.draw(lines);
 
 		// Particle 0
 		double x = state->getPos(0)[0] * scale + windowWidth / 2; 
@@ -86,6 +94,27 @@ void visuThread(const State *state, const long n1, const long n2) {
 		}
         window.display();
     }
+}
+
+void linesFromVoronoi(sf::VertexArray &lines, const VoronoiList &voronoi,
+                      const double x0, const double y0, const double Lx,
+					  const double Ly, const float scale) {
+	for (CGAL_K::Segment_2 s : voronoi) {
+		double x1 = s[0][0] + x0;
+		double y1 = s[0][1] + y0;
+		double x2 = s[1][0] + x0;
+		double y2 = s[1][1] + y0;
+		pbc(x1, Lx);
+		pbc(x2, Ly);
+		pbc(y1, Lx);
+		pbc(y2, Ly);
+		x1 *= scale;
+		x2 *= scale;
+		y1 *= scale;
+		y2 *= scale;
+		lines.append(sf::Vertex(sf::Vector2f(x1, y1), sf::Color::Black));
+		lines.append(sf::Vertex(sf::Vector2f(x2, y2), sf::Color::Black));
+	}
 }
 
 /*!
