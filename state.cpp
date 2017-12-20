@@ -116,7 +116,12 @@ VoronoiList State::computeVoronoi() const {
 		const CGAL_K::Segment_2* s =
 			CGAL::object_cast<CGAL_K::Segment_2>(&obj);
 		if (s) {
-			voronoi.push_back(*s);
+			if ((*s)[0][0] > -Lx / 2 && (*s)[0][0] < Lx / 2
+				&& (*s)[1][0] > -Lx / 2 && (*s)[1][0] < Lx / 2
+				&& (*s)[0][1] > -Ly / 2 && (*s)[0][1] < Ly / 2
+				&& (*s)[1][1] > -Ly / 2 && (*s)[1][1] < Ly / 2){
+					voronoi.push_back(*s);
+			}
 		}
 	}
 
